@@ -4,7 +4,7 @@ CREATE TABLE "Users" (
     "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "hash" TEXT NOT NULL,
-    "avatar" TEXT NOT NULL,
+    "avatar" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 

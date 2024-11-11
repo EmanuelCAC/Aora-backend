@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { AuthDto } from './dto';
+import { SignUpDto, SignInDto } from './dto';
 import * as bcrypt from "bcrypt";
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
@@ -8,7 +8,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 export class AuthService {
   constructor(private prisma: PrismaService) {}
 
-  async signup(dto: AuthDto) {
+  async signup(dto: SignUpDto) {
     const hash = await bcrypt.hash(dto.password, 10)
 
     try {
@@ -17,7 +17,6 @@ export class AuthService {
           email: dto.email,
           hash: hash,
           name: dto.name,
-          avatar: dto.avatar
         },
       })
   
@@ -34,7 +33,25 @@ export class AuthService {
     }
   }
 
-  signin() {
-    return { msg: 'I have signed in'}
+  async signin(dto: SignInDto) {
+    try {
+      const user = await this.prisma.users.findUnique({
+        where: {
+          email: dto.email
+        }
+      })
+
+      if (!user) throw new ForbiddenException('Credentials incorrect')
+
+      const passMatches = await bcrypt.compare(dto.password, user.hash)
+
+      if (!passMatches) throw new ForbiddenException('Credentials incorrect')
+
+      delete user.hash
+
+      return user
+    } catch (error) {
+      throw error
+    }
   }
 }
