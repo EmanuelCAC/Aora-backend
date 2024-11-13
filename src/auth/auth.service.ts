@@ -3,10 +3,13 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { SignUpDto, SignInDto } from './dto';
 import * as bcrypt from "bcrypt";
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import { access } from 'fs';
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private jwt: JwtService, private config: ConfigService) {}
 
   async signup(dto: SignUpDto) {
     const hash = await bcrypt.hash(dto.password, 10)
@@ -19,10 +22,8 @@ export class AuthService {
           name: dto.name,
         },
       })
-  
-      delete user.hash
-  
-      return user
+    
+      return this.signToken(user.id, user.email, user.name, user.avatar)
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
@@ -47,11 +48,29 @@ export class AuthService {
 
       if (!passMatches) throw new ForbiddenException('Credentials incorrect')
 
-      delete user.hash
-
-      return user
+      return this.signToken(user.id, user.email, user.name, user.avatar)
     } catch (error) {
       throw error
+    }
+  }
+
+  async signToken(userId: number, email: string, name: string, avatar: null | string): Promise<{ access_token: string}> {
+    const payload = {
+      sub: userId,
+      email,
+      name,
+      avatar
+    }
+
+    const secret = this.config.get('JWT_SECRET')
+
+    const token = await this.jwt.signAsync(payload, {
+      expiresIn: '15m',
+      secret
+    })
+
+    return {
+      access_token: token
     }
   }
 }
