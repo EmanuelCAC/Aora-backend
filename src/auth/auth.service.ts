@@ -23,7 +23,14 @@ export class AuthService {
         },
       })
     
-      return this.signToken(user.id, user.email, user.name, user.avatar)
+
+      return {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        avatar: user.avatar,
+        token: this.signToken(user.id, user.email, user.name, user.avatar)
+      }
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
@@ -48,7 +55,13 @@ export class AuthService {
 
       if (!passMatches) throw new ForbiddenException('Credentials incorrect')
 
-      return this.signToken(user.id, user.email, user.name, user.avatar)
+      return {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        avatar: user.avatar,
+        token: this.signToken(user.id, user.email, user.name, user.avatar)
+      }
     } catch (error) {
       throw error
     }
