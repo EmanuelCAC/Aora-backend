@@ -29,7 +29,7 @@ export class AuthService {
         email: user.email,
         name: user.name,
         avatar: user.avatar,
-        token: this.signToken(user.id, user.email, user.name, user.avatar)
+        token: (await this.signToken(user.id, user.email, user.name, user.avatar)).token
       }
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
@@ -60,7 +60,7 @@ export class AuthService {
         email: user.email,
         name: user.name,
         avatar: user.avatar,
-        token: this.signToken(user.id, user.email, user.name, user.avatar)
+        token: (await this.signToken(user.id, user.email, user.name, user.avatar)).token
       }
     } catch (error) {
       throw error
