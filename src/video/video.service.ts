@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { VideoDto } from './dto';
 import { CloudnaryService } from 'src/cloudnary/cloudnary.service';
@@ -9,7 +9,16 @@ export class VideoService {
 
   async getAll() {
     try {
-      const videos = await this.prisma.videos.findMany()
+      const videos = await this.prisma.videos.findMany({
+        include: {
+          creator: {
+            select: {
+              name: true,
+              avatar: true
+            }
+          }
+        }
+      })
 
       return videos
     } catch (error) {
@@ -20,6 +29,14 @@ export class VideoService {
   async getLatest() {
     try {
       const latestVideos = await this.prisma.videos.findMany({
+        include: {
+          creator: {
+            select: {
+              name: true,
+              avatar: true
+            }
+          }
+        },
         orderBy: {
           createdAt: 'asc'
         }
@@ -35,7 +52,11 @@ export class VideoService {
     try {
       const thumbnail_url = await this.cloundnary.uploadImage(dto.thumbnail)
 
+      if(!thumbnail_url) throw new ForbiddenException('No thumbnail')
+
       const video_url = await this.cloundnary.uploadVideo(dto.video)
+
+      if(!video_url) throw new ForbiddenException('No video')
 
       const video = await this.prisma.videos.create({
         data: {
