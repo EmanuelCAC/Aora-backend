@@ -10,11 +10,22 @@ import { VideoService } from './video/video.service';
 import { VideoModule } from './video/video.module';
 import { CloudnaryService } from './cloudnary/cloudnary.service';
 import { CloudnaryModule } from './cloudnary/cloudnary.module';
+import { diskStorage } from 'multer';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true
+    }),
+    MulterModule.register({
+      storage: diskStorage({
+        destination: './uploads',
+        filename: (req, file, cb) => {
+          const filename = `${Date.now()}-${file.originalname}`;
+          cb(null, filename);
+        },
+      }),
     }),
     PrismaModule,
     AuthModule,

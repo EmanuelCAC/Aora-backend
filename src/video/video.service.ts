@@ -48,13 +48,13 @@ export class VideoService {
     }
   }
 
-  async create(dto: VideoDto) {
+  async create(dto: VideoDto, files: { image?: Express.Multer.File[], video?: Express.Multer.File[] }) {
     try {
-      const thumbnail_url = await this.cloundnary.uploadImage(dto.thumbnail)
+      const thumbnail_url = await this.cloundnary.uploadImage(files.image[0].path)
 
       if(!thumbnail_url) throw new ForbiddenException('No thumbnail')
 
-      const video_url = await this.cloundnary.uploadVideo(dto.video)
+      const video_url = await this.cloundnary.uploadVideo(files.video[0].path)
 
       if(!video_url) throw new ForbiddenException('No video')
 
@@ -64,11 +64,13 @@ export class VideoService {
           thumbnail: thumbnail_url,
           video: video_url,
           prompt: dto.prompt || null,
-          creatorId: dto.creatorId
+          creatorId: Number(dto.creatorId)
         }
       })
 
-      return video
+      if(!video) throw new ForbiddenException(`Couldn't create the post`)
+
+      return { success: 'true'}
     } catch (error) {
       throw error
     }
