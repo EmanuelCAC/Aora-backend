@@ -5,7 +5,6 @@ import * as bcrypt from "bcrypt";
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { access } from 'fs';
 
 @Injectable()
 export class AuthService {
@@ -20,6 +19,7 @@ export class AuthService {
           email: dto.email,
           hash: hash,
           name: dto.name,
+          avatar: "https://res.cloudinary.com/duheudj5m/image/upload/v1733785827/twp9qcahnicfykuaizo7.png"
         },
       })
     

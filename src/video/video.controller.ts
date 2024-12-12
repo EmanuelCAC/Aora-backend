@@ -2,11 +2,11 @@ import { Body, Controller, Get, Post, UploadedFile, UploadedFiles, UseGuards, Us
 import { VideoService } from './video.service';
 import { JwtGuard } from 'src/auth/guard';
 import { VideoDto } from './dto';
-import { AnyFilesInterceptor, FileFieldsInterceptor, FileInterceptor, FilesInterceptor, MulterModule } from '@nestjs/platform-express';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 
 
 
-// @UseGuards(JwtGuard)
+@UseGuards(JwtGuard)
 @Controller('videos')
 export class VideoController {
   constructor(private videoService: VideoService) { }
@@ -33,4 +33,8 @@ export class VideoController {
     return this.videoService.create(dto, files)
   }
 
+  @Post('search')
+  search(@Body() query: string) {
+    return this.videoService.search(query)
+  }
 }

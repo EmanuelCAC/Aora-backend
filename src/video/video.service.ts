@@ -75,4 +75,29 @@ export class VideoService {
       throw error
     }
   }
+
+  async search(query: string) {
+    try {
+      const videos = await this.prisma.videos.findMany({
+        where: {
+          OR: [
+            {
+              title: {
+                contains: query
+              }
+            },
+            {
+              prompt: {
+                contains: query
+              }
+            }
+          ]
+        }
+      })
+
+      return videos
+    } catch (error) {
+      throw error
+    }
+  }
 }
