@@ -26,7 +26,7 @@ export class VideoController {
     { name: 'image', maxCount: 2 },
     { name: 'video', maxCount: 1 },
   ]))
-  createPost(
+  create(
     @Body() dto: VideoDto,
     @UploadedFiles() files: { image?: Express.Multer.File[], video?: Express.Multer.File[] }
   ) {
@@ -34,7 +34,7 @@ export class VideoController {
   }
 
   @Post('search')
-  search(@Body() query: string) {
-    return this.videoService.search(query)
+  search(@Body() dto: {query: string}) {
+    return this.videoService.search(dto.query)
   }
 }
