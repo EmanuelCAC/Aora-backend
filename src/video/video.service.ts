@@ -79,16 +79,26 @@ export class VideoService {
   async search(query: string) {
     try {
       const videos = await this.prisma.videos.findMany({
+        include: {
+          creator: {
+            select: {
+              name: true,
+              avatar: true
+            }
+          }
+        },
         where: {
           OR: [
             {
               title: {
-                contains: query
+                contains: query,
+                mode: 'insensitive'
               }
             },
             {
               prompt: {
-                contains: query
+                contains: query,
+                mode: 'insensitive'
               }
             }
           ]
