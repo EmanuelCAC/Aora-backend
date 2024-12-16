@@ -12,6 +12,7 @@ import { CloudnaryService } from './cloudnary/cloudnary.service';
 import { CloudnaryModule } from './cloudnary/cloudnary.module';
 import { diskStorage } from 'multer';
 import { MulterModule } from '@nestjs/platform-express';
+import { BookmarkModule } from './bookmark/bookmark.module';
 
 @Module({
   imports: [
@@ -31,7 +32,8 @@ import { MulterModule } from '@nestjs/platform-express';
     AuthModule,
     UserModule,
     VideoModule,
-    CloudnaryModule
+    CloudnaryModule,
+    BookmarkModule
   ],
   controllers: [AppController, VideoController],
   providers: [VideoService, CloudnaryService],
