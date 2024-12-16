@@ -13,6 +13,8 @@ import { CloudnaryModule } from './cloudnary/cloudnary.module';
 import { diskStorage } from 'multer';
 import { MulterModule } from '@nestjs/platform-express';
 import { BookmarkModule } from './bookmark/bookmark.module';
+import { UserController } from './user/user.controller';
+import { UserService } from './user/user.service';
 
 @Module({
   imports: [
@@ -35,7 +37,7 @@ import { BookmarkModule } from './bookmark/bookmark.module';
     CloudnaryModule,
     BookmarkModule
   ],
-  controllers: [AppController, VideoController],
-  providers: [VideoService, CloudnaryService],
+  controllers: [AppController, VideoController, UserController],
+  providers: [VideoService, CloudnaryService, UserService],
 })
 export class AppModule {}
