@@ -48,6 +48,28 @@ export class VideoService {
     }
   }
 
+  async getUserVideos(id: number) {
+    try {
+      const videos = await this.prisma.videos.findMany({
+        include: {
+          creator: {
+            select: {
+              name: true,
+              avatar: true
+            }
+          }
+        },
+        where: {
+          creatorId: id
+        }
+      })
+
+      return videos
+    } catch (error) {
+      throw error
+    }
+  }
+
   async create(dto: VideoDto, files: { image?: Express.Multer.File[], video?: Express.Multer.File[] }) {
     try {
       const thumbnail_url = await this.cloundnary.uploadImage(files.image[0].path)
@@ -106,6 +128,22 @@ export class VideoService {
       })
 
       return videos
+    } catch (error) {
+      throw error
+    }
+  }
+
+  async remove(id: number) {
+    try {
+      const video = await this.prisma.videos.delete({
+        where: {
+          id: id
+        }
+      })
+
+      if (!video) throw new ForbiddenException('Video not found')
+
+      return { success: 'true' }
     } catch (error) {
       throw error
     }
